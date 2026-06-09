@@ -29,6 +29,10 @@ func (a *Database) NewSession() db.Session {
 		if session, err := postgresdriver.Session(a.Pool); err == nil {
 			return session
 		}
+	case "mongo":
+		if session, err := mongodriver.Session(a.Pool); err == null {
+			return session
+		}
 	}
 
 	return nil
@@ -49,6 +53,8 @@ func OpenDB(dbType string, config *DataSourceName) (*sql.DB, error) {
 		dsn = postgresdriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName, config.SslMode)
 	case "mysql":
 		dsn = mysqldriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName)
+	case "mongo":
+		dsn = mongodriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName, config.IsAtlastHosted)
 	default:
 		return nil, fmt.Errorf("unsupported database driver: %s", dbType)
 	}
@@ -83,6 +89,8 @@ func getDBDriver(dbType string) string {
 		return "pgx"
 	case "mysql", "mariadb":
 		return "mysql"
+	case "mongo", "mongodb":
+		return "mongo"
 	default:
 		return dbType
 	}
