@@ -4,7 +4,6 @@ import(
 	"fmt"
 	"net/url"
 	"options"
-	"url"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
