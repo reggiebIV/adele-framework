@@ -3,7 +3,6 @@ package mongodriver
 import(
 	"fmt"
 	"net/url"
-	"options"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -19,7 +18,7 @@ func BuildDSN(host, port, user, password, dbname string, atlastHost bool) string
 }
 
 func Connect(uri string) (*mongo.Client, error) {
-	options.Client().ApplyURI(uri).SetMaxPoolSize(25)
+	session, err := options.Client().ApplyURI(uri).SetMaxPoolSize(25)
 	if err != nil {
 		return nil, err
 	}

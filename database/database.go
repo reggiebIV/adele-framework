@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/cidekar/adele-framework/database/mysqldriver"
 	"github.com/cidekar/adele-framework/database/postgresdriver"
 	"github.com/upper/db/v4"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 // NewSession creates a new sqlbuilder.Session instance based on the configured database type.
@@ -29,11 +31,6 @@ func (a *Database) NewSession() db.Session {
 		if session, err := postgresdriver.Session(a.Pool); err == nil {
 			return session
 		}
-	case "mongo":
-		if session, err := mongodriver.Session(a.Pool); err == null {
-			return session
-		}
-	}
 
 	return nil
 }
@@ -53,8 +50,6 @@ func OpenDB(dbType string, config *DataSourceName) (*sql.DB, error) {
 		dsn = postgresdriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName, config.SslMode)
 	case "mysql":
 		dsn = mysqldriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName)
-	case "mongo":
-		dsn = mongodriver.BuildDSN(config.Host, config.Port, config.User, config.Password, config.DatabaseName, config.IsAtlastHosted)
 	default:
 		return nil, fmt.Errorf("unsupported database driver: %s", dbType)
 	}
@@ -80,6 +75,11 @@ func OpenDB(dbType string, config *DataSourceName) (*sql.DB, error) {
 	db.SetConnMaxLifetime(5 * time.Minute)
 
 	return db, nil
+}
+
+// Set up a MongoDB Connection
+func OpenMongo() (*mongo.Client, error) {
+
 }
 
 // Convert database type to driver name
